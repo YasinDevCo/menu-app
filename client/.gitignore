@@ -1,0 +1,13 @@
+node_modules/
+.env
+.next/
+out/
+build/
+dist/
+*.log
+.DS_Store
+.vscode/
+.idea/
+package-lock.json
+yarn.lock
+public/uploads/

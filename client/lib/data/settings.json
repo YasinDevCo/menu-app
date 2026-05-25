@@ -1,0 +1,25 @@
+{
+  "primaryColor": "#1e40af",
+  "accentColor": "#f59e0b",
+  "borderRadius": 12,
+  "restaurantName": "رستوران سنتی",
+  "restaurantNameEn": "Traditional Restaurant",
+  "restaurantLogo": "/images/logo.png",
+  "serviceHours": {
+    "enabled": true,
+    "openTime": "12:00",
+    "closeTime": "23:00",
+    "message": "آشپزخانه در حال حاضر تعطیل است. ساعات کاری: ۱۲:۰۰ تا ۲۳:۰۰. شما همچنان می‌توانید منو را مشاهده و سفارش خود را برای بعد ثبت کنید.",
+    "messageEn": "Kitchen is currently closed. Service hours: 12:00 - 23:00. You can still browse the menu and place orders for later."
+  },
+  "aboutUs": {
+    "content": "رستوران سنتی ما با بیش از ۲۰ سال سابقه در ارائه غذاهای اصیل ایرانی، همواره تلاش کرده است بهترین طعم‌ها را به شما عرضه کند. ما از مواد اولیه تازه و با کیفیت استفاده می‌کنیم و تمام غذاها با دستور پخت سنتی و به سبک اصیل ایرانی تهیه می‌شوند.",
+    "contentEn": "Our traditional restaurant with over 20 years of experience in serving authentic Persian cuisine has always strived to offer you the best flavors. We use fresh, high-quality ingredients and all dishes are prepared with traditional recipes in authentic Persian style."
+  },
+  "pageVisibility": {
+    "menu": true,
+    "cart": true,
+    "aboutUs": true,
+    "complaints": true
+  }
+}

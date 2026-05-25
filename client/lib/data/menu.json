@@ -1,0 +1,167 @@
+[
+  {
+    "id": "item-1",
+    "name": "چلوکباب کوبیده",
+    "description": "دو سیخ کباب کوبیده با برنج ایرانی، گوجه کبابی و کره",
+    "price": 280000,
+    "categoryId": "kebabs",
+    "imageUrl": "/images/koobideh.jpg",
+    "isAvailable": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2026-05-15T14:50:10.631Z"
+  },
+  {
+    "id": "item-3",
+    "name": "کباب برگ",
+    "description": "فیله گوسفندی مزه‌دار با برنج زعفرانی",
+    "price": 350000,
+    "categoryId": "kebabs",
+    "imageUrl": "/images/barg.jpg",
+    "isAvailable": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "item-4",
+    "name": "قورمه سبزی",
+    "description": "خورشت سنتی ایرانی با سبزیجات معطر، لوبیا قرمز و گوشت",
+    "price": 180000,
+    "categoryId": "stews",
+    "imageUrl": "/images/ghormeh.jpg",
+    "isAvailable": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "item-5",
+    "name": "قیمه",
+    "description": "خورشت نخودفرنگی با گوشت و لیمو عمانی، تزیین شده با سیب‌زمینی سرخ شده",
+    "price": 160000,
+    "categoryId": "stews",
+    "imageUrl": "/images/gheymeh.jpg",
+    "isAvailable": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "item-6",
+    "name": "فسنجان",
+    "description": "خورشت گردو و رب انار با مرغ",
+    "price": 200000,
+    "categoryId": "stews",
+    "imageUrl": "/images/fesenjan.jpg",
+    "isAvailable": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "item-7",
+    "name": "زرشک پلو با مرغ",
+    "description": "برنج زعفرانی با زرشک و مرغ سرخ شده",
+    "price": 220000,
+    "categoryId": "main-dishes",
+    "imageUrl": "/images/zereshk.jpg",
+    "isAvailable": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "item-8",
+    "name": "باقالی پلو با ماهیچه",
+    "description": "برنج با باقالی و شوید، همراه با ماهیچه گوسفندی",
+    "price": 320000,
+    "categoryId": "main-dishes",
+    "imageUrl": "/images/baghali.jpg",
+    "isAvailable": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "item-9",
+    "name": "میرزا قاسمی",
+    "description": "بادمجان کبابی با گوجه، سیر و تخم‌مرغ",
+    "price": 120000,
+    "categoryId": "appetizers",
+    "imageUrl": "/images/mirza.jpg",
+    "isAvailable": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "item-10",
+    "name": "کشک بادمجان",
+    "description": "بادمجان سرخ شده با کشک و نعنا داغ",
+    "price": 110000,
+    "categoryId": "appetizers",
+    "imageUrl": "/images/kashk.jpg",
+    "isAvailable": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "item-11",
+    "name": "سالاد شیرازی",
+    "description": "خیار، گوجه، پیاز با آبلیمو و نعنا",
+    "price": 60000,
+    "categoryId": "appetizers",
+    "imageUrl": "/images/salad.jpg",
+    "isAvailable": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "item-12",
+    "name": "دوغ",
+    "description": "دوغ محلی با نعنا و پونه",
+    "price": 25000,
+    "categoryId": "beverages",
+    "imageUrl": "/images/doogh.jpg",
+    "isAvailable": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "item-13",
+    "name": "چای سنتی",
+    "description": "چای ایرانی دم‌کرده با زعفران",
+    "price": 15000,
+    "categoryId": "beverages",
+    "imageUrl": "/images/chai.jpg",
+    "isAvailable": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "item-14",
+    "name": "شربت آلبالو",
+    "description": "شربت خانگی آلبالو با یخ",
+    "price": 35000,
+    "categoryId": "beverages",
+    "imageUrl": "/images/sharbat.jpg",
+    "isAvailable": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "item-15",
+    "name": "باقلوا",
+    "description": "باقلوای خانگی با پسته و گلاب",
+    "price": 80000,
+    "categoryId": "desserts",
+    "imageUrl": "/images/baklava.jpg",
+    "isAvailable": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "item-16",
+    "name": "فرنی",
+    "description": "دسر شیربرنج سنتی با دارچین و گلاب",
+    "price": 50000,
+    "categoryId": "desserts",
+    "imageUrl": "/images/fereni.jpg",
+    "isAvailable": true,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
+]

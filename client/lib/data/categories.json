@@ -1,0 +1,37 @@
+[
+  {
+    "id": "main-dishes",
+    "name": "غذای اصلی",
+    "icon": "🥘",
+    "order": 1,
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "kebabs",
+    "name": "کباب‌ها",
+    "icon": "🍢",
+    "order": 2,
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "stews",
+    "name": "خورشت‌ها",
+    "icon": "🍲",
+    "order": 3,
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "appetizers",
+    "name": "پیش غذا",
+    "icon": "🥗",
+    "order": 4,
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "desserts",
+    "name": "دسر",
+    "icon": "🍰",
+    "order": 6,
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  }
+]
