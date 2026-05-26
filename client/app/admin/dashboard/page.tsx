@@ -11,7 +11,9 @@ import {
   Store,
   Key,
   ClipboardList,
-  BellRing
+  BellRing,
+  TrendingUp,
+  Percent
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -54,6 +56,17 @@ const adminLinks = [
     title: 'تنظیمات ظاهری',
     description: 'تغییر رنگ‌ها و ظاهر اپلیکیشن',
     icon: Palette,
+  }, {
+    href: '/admin/reports',
+    title: 'گزارشات فروش',
+    description: 'مشاهده آمار و نمودارهای فروش',
+    icon: TrendingUp,
+  },
+  {
+    href: '/admin/coupons',
+    title: 'کدهای تخفیف',
+    description: 'مدیریت کدهای تخفیف',
+    icon: Percent,
   },
 ]
 

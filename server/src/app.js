@@ -13,7 +13,9 @@ const productRoutes = require('./routes/product.routes');
 const menuRoutes = require('./routes/menu.routes');
 const orderRoutes = require('./routes/order.routes');
 const waiterRoutes = require('./routes/waiter.routes');
-
+const statsRoutes = require('./routes/stats.routes');
+const paymentRoutes = require('./routes/payment.routes');
+const couponRoutes = require('./routes/coupon.routes');
 // ========== CORS Options ==========
 const corsOptions = {
   origin: ['http://localhost:3000', 'http://localhost:5000'],
@@ -64,6 +66,9 @@ app.use('/api/products', productRoutes);
 app.use('/api/menu', menuRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/waiter', waiterRoutes);
+app.use('/api/stats', statsRoutes);
+app.use('/api/payment', paymentRoutes);
+app.use('/api/coupons', couponRoutes);
 
 // ========== Health Check ==========
 app.get('/health', (req, res) => {

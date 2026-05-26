@@ -6,13 +6,15 @@ let socket: Socket | null = null;
 export const getSocket = (businessId?: string) => {
   if (!socket) {
     socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000', {
-      transports: ['websocket'],
+      transports: ['websocket', 'polling'],
       autoConnect: true,
+      reconnection: true,
+      reconnectionAttempts: 5,
     });
 
     socket.on('connect', () => {
       console.log('✅ Socket connected:', socket?.id);
-      
+
       if (businessId) {
         socket?.emit('join-business', businessId);
         console.log(`Joined business room: ${businessId}`);
@@ -27,7 +29,7 @@ export const getSocket = (businessId?: string) => {
       console.error('Socket connection error:', error);
     });
   }
-  
+
   return socket;
 };
 

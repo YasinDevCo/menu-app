@@ -204,8 +204,7 @@ function NoteSection() {
   return (
     <div className="p-4 bg-muted/50 rounded-lg">
       <p className="text-sm text-muted-foreground">
-        توجه: برای اعمال تغییرات رنگ در کل اپلیکیشن، نیاز به به‌روزرسانی
-        فایل CSS است. این تنظیمات فعلا ذخیره می‌شوند.
+        توجه: با تغییر رنگ و ذخیره، کل سایت به‌روز می‌شود.
       </p>
     </div>
   )
@@ -220,7 +219,6 @@ export default function AdminThemePage() {
   useEffect(() => {
     async function fetchSettings() {
       try {
-        // دریافت تنظیمات از Business پروفایل
         const response = await api.get('/business/profile')
         const business = response.data.business
 
@@ -229,14 +227,12 @@ export default function AdminThemePage() {
             restaurantName: business.name,
             restaurantLogo: business.logoUrl || '/logo.png',
             primaryColor: business.primaryColor || '#722F37',
-            accentColor: '#D4AF37', // رنگ ثابت طلایی
+            accentColor: '#D4AF37',
             borderRadius: 12,
           })
         }
       } catch (error) {
         console.error('Failed to fetch settings:', error)
-        toast.error('خطا در دریافت تنظیمات')
-        // دیتای پیش‌فرض
         setSettings({
           restaurantName: 'رستوران من',
           restaurantLogo: '/logo.png',
@@ -258,16 +254,26 @@ export default function AdminThemePage() {
     setIsSaving(true)
 
     try {
-      // ذخیره تنظیمات در Business
       await api.put('/business/profile', {
         name: settings.restaurantName,
         primaryColor: settings.primaryColor,
       })
 
-      toast.success('تنظیمات ذخیره شد')
+      // ذخیره در localStorage برای اعمال در کل سایت
+      localStorage.setItem('theme-colors', JSON.stringify({
+        primaryColor: settings.primaryColor,
+        accentColor: settings.accentColor,
+      }))
 
-      // به‌روزرسانی صفحه
-      window.location.reload()
+      // اعمال لحظه‌ای به CSS
+      document.documentElement.style.setProperty('--primary', settings.primaryColor)
+      document.documentElement.style.setProperty('--ring', settings.primaryColor)
+
+      toast.success('تنظیمات ذخیره شد. صفحه در حال به‌روزرسانی...')
+
+      setTimeout(() => {
+        window.location.reload()
+      }, 500)
     } catch (error: any) {
       toast.error(error.response?.data?.error?.message || 'خطا در ذخیره تنظیمات')
     } finally {
@@ -301,7 +307,6 @@ export default function AdminThemePage() {
 
   return (
     <main className="min-h-screen bg-background" dir="rtl">
-      {/* Header */}
       <header className="border-b border-border bg-card sticky top-0 z-50">
         <div className="flex items-center justify-between h-14 px-4 max-w-4xl mx-auto">
           <div className="flex items-center gap-2">
@@ -320,7 +325,6 @@ export default function AdminThemePage() {
         </div>
       </header>
 
-      {/* Content */}
       <div className="p-4 max-w-4xl mx-auto space-y-6">
         <RestaurantInfoSection settings={settings} setSettings={setSettings} />
         <ColorPresetsSection settings={settings} setSettings={setSettings} />

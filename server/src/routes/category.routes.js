@@ -10,8 +10,8 @@ const {
   deleteCategory
 } = require('../controllers/category.controller');
 
-router.use(protect);
 router.get('/', getCategories);
+router.use(protect);
 
 
 router.post('/', uploadCategory.single('icon'), validateCategory.create, createCategory);

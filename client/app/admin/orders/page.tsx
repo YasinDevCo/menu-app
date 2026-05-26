@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Eye, CheckCircle, Clock, XCircle, Bell } from 'lucide-react'
+import { ArrowRight, Eye, CheckCircle, Clock, XCircle, Bell, CreditCard } from 'lucide-react'
 import { useOrders, useUpdateOrderStatus } from '@/lib/hooks/useOrders'
 import { useAuthStore } from '@/lib/store/auth-store'
 import { getSocket } from '@/lib/socket'
@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { toast } from 'sonner'
+import api from '@/lib/api/client'
 
 const statusMap: Record<string, { label: string; color: string }> = {
     PENDING: { label: 'در انتظار', color: 'bg-yellow-500' },
@@ -39,8 +40,6 @@ export default function AdminOrdersPage() {
             if (!soundEnabledRef.current) {
                 soundEnabledRef.current = true
                 setSoundEnabled(true)
-                console.log('🔊 Sound enabled by user interaction')
-                // پخش یک صدای تست کوتاه (اختیاری)
                 const testAudio = new Audio('/sounds/notification.mp3')
                 testAudio.volume = 0.1
                 testAudio.play().catch(e => console.log('Test sound:', e))
@@ -62,32 +61,25 @@ export default function AdminOrdersPage() {
 
         const socket = getSocket(business.id)
 
-        // گوش دادن به سفارش جدید
         socket.on('order-notification', (data) => {
-            console.log('📢 سفارش جدید دریافت شد در فرانت:', data)
+            console.log('📢 سفارش جدید دریافت شد:', data)
 
-            // پخش صدا فقط اگر کاربر تعامل کرده باشد
             if (soundEnabledRef.current) {
                 const audio = new Audio('/sounds/notification.mp3')
                 audio.volume = 0.7
                 audio.play().catch(e => console.log('صدا پخش نشد:', e))
-            } else {
-                console.log('🔇 Sound disabled - waiting for user interaction')
             }
 
-            // اعلان بصری
             toast.success(`سفارش جدید از میز ${data.tableNumber}`, {
                 duration: 5000,
                 icon: <Bell className="h-4 w-4" />
             })
 
-            // ری‌فرش لیست سفارشات
             refetch()
             setNewOrderAlert(true)
             setTimeout(() => setNewOrderAlert(false), 3000)
         })
 
-        // گوش دادن به تغییر وضعیت سفارش
         socket.on('status-updated', (data) => {
             console.log('🔄 وضعیت سفارش تغییر کرد:', data)
             refetch()
@@ -102,6 +94,21 @@ export default function AdminOrdersPage() {
 
     const handleStatusChange = (orderId: string, newStatus: string) => {
         updateStatus.mutate({ id: orderId, status: newStatus as any })
+    }
+
+    // دکمه پرداخت آنلاین
+    const handlePayment = async (orderId: string) => {
+        try {
+            const { data } = await api.post('/payment/request', { orderId })
+            if (data.success && data.data.paymentUrl) {
+                window.open(data.data.paymentUrl, '_blank')
+                toast.success('درگاه پرداخت باز شد')
+            } else {
+                toast.error('خطا در ایجاد درگاه پرداخت')
+            }
+        } catch (error: any) {
+            toast.error(error.response?.data?.error?.message || 'خطا در ایجاد درگاه پرداخت')
+        }
     }
 
     if (isLoading) {
@@ -125,7 +132,7 @@ export default function AdminOrdersPage() {
 
     return (
         <main className="min-h-screen bg-background" dir="rtl">
-            {/* Header with Alert Indicator */}
+            {/* Header */}
             <header className="border-b border-border bg-card sticky top-0 z-50">
                 <div className="flex items-center justify-between h-14 px-4 max-w-4xl mx-auto">
                     <div className="flex items-center gap-2">
@@ -153,7 +160,7 @@ export default function AdminOrdersPage() {
             {/* Content */}
             <div className="p-4 max-w-4xl mx-auto">
                 <Tabs defaultValue="all" onValueChange={setSelectedTab} className="space-y-4">
-                    <TabsList className="grid grid-cols-4 w-full max-w-md mx-auto">
+                    <TabsList className="grid grid-cols-5 w-full max-w-md mx-auto">
                         <TabsTrigger value="all">همه</TabsTrigger>
                         <TabsTrigger value="PENDING" className="relative">
                             در انتظار
@@ -163,6 +170,7 @@ export default function AdminOrdersPage() {
                                 </span>
                             )}
                         </TabsTrigger>
+                        <TabsTrigger value="CONFIRMED">تأیید شده</TabsTrigger>
                         <TabsTrigger value="PREPARING">در حال آماده‌سازی</TabsTrigger>
                         <TabsTrigger value="READY">آماده</TabsTrigger>
                     </TabsList>
@@ -183,6 +191,11 @@ export default function AdminOrdersPage() {
                                             <Badge className={statusMap[order.status]?.color}>
                                                 {statusMap[order.status]?.label || order.status}
                                             </Badge>
+                                            {order.payment?.method === 'ONLINE' && order.payment?.status === 'PAID' && (
+                                                <Badge variant="outline" className="border-green-500 text-green-600">
+                                                    پرداخت شده
+                                                </Badge>
+                                            )}
                                         </div>
                                         <div className="text-sm text-muted-foreground">
                                             میز: {toPersianNumber(order.tableNumber)}
@@ -205,8 +218,22 @@ export default function AdminOrdersPage() {
                                             {formatPrice(order.totalAmount)}
                                         </div>
 
-                                        <div className="flex gap-2">
+                                        <div className="flex gap-2 flex-wrap">
+                                            {/* پرداخت آنلاین */}
                                             {order.status === 'PENDING' && (
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                    onClick={() => handlePayment(order._id)}
+                                                    className="border-green-500 text-green-600 hover:bg-green-50"
+                                                >
+                                                    <CreditCard className="h-4 w-4 ml-1" />
+                                                    پرداخت آنلاین
+                                                </Button>
+                                            )}
+
+                                            {/* دکمه‌های تغییر وضعیت */}
+                                            {order.status === 'PENDING' && order.payment?.status === 'PAID' && (
                                                 <Button
                                                     size="sm"
                                                     variant="outline"
@@ -217,6 +244,7 @@ export default function AdminOrdersPage() {
                                                     تأیید
                                                 </Button>
                                             )}
+
                                             {order.status === 'CONFIRMED' && (
                                                 <Button
                                                     size="sm"
@@ -228,6 +256,7 @@ export default function AdminOrdersPage() {
                                                     شروع آماده‌سازی
                                                 </Button>
                                             )}
+
                                             {order.status === 'PREPARING' && (
                                                 <Button
                                                     size="sm"
@@ -239,6 +268,7 @@ export default function AdminOrdersPage() {
                                                     آماده تحویل
                                                 </Button>
                                             )}
+
                                             {order.status === 'READY' && (
                                                 <Button
                                                     size="sm"
@@ -250,7 +280,8 @@ export default function AdminOrdersPage() {
                                                     تحویل شد
                                                 </Button>
                                             )}
-                                            {(order.status === 'PENDING' || order.status === 'CONFIRMED') && (
+
+                                            {order.status === 'PENDING' && (
                                                 <Button
                                                     size="sm"
                                                     variant="outline"
@@ -262,6 +293,7 @@ export default function AdminOrdersPage() {
                                                     لغو
                                                 </Button>
                                             )}
+
                                             <Button size="sm" variant="ghost" asChild>
                                                 <Link href={`/admin/orders/${order._id}`}>
                                                     <Eye className="h-4 w-4" />
