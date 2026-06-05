@@ -16,9 +16,15 @@ const waiterRoutes = require('./routes/waiter.routes');
 const statsRoutes = require('./routes/stats.routes');
 const paymentRoutes = require('./routes/payment.routes');
 const couponRoutes = require('./routes/coupon.routes');
+
 // ========== CORS Options ==========
 const corsOptions = {
-  origin: ['http://localhost:3000', 'http://localhost:5000'],
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:5000',
+    'https://menu-app-client-n6g0g41be-yasins-projects-e4434943.vercel.app',
+    /\.vercel\.app$/
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
@@ -27,7 +33,7 @@ const corsOptions = {
 
 const app = express();
 
-// ========== Security Headers with CORS fix for images ==========
+// ========== Security Headers ==========
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
   crossOriginOpenerPolicy: { policy: "unsafe-none" },
@@ -42,7 +48,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
-// ========== Static files for uploads with proper headers ==========
+// ========== Static files for uploads ==========
 app.use('/uploads', (req, res, next) => {
   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
   res.setHeader('Access-Control-Allow-Origin', '*');

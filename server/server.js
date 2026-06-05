@@ -7,13 +7,18 @@ const socketIo = require('socket.io');
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: ['http://localhost:3000', 'http://localhost:5000'],
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:5000',
+      'https://menu-app-client-n6g0g41be-yasins-projects-e4434943.vercel.app',
+      /\.vercel\.app$/
+    ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
-
   }
 });
 app.set('io', io);
+
 process.on('uncaughtException', (err) => {
   console.error('❌ Uncaught Exception:', err);
   process.exit(1);
@@ -23,25 +28,21 @@ process.on('uncaughtException', (err) => {
 io.on('connection', (socket) => {
   console.log('📡 New client connected:', socket.id);
 
-  // دریافت businessId و join کردن به اتاق
   socket.on('join-business', (businessId) => {
     socket.join(`business_${businessId}`);
     console.log(`Socket ${socket.id} joined business_${businessId}`);
   });
 
-  // رویداد سفارش جدید
   socket.on('new-order', (data) => {
     io.to(`business_${data.businessId}`).emit('order-notification', data);
     console.log(`📢 New order notification for business ${data.businessId}`);
   });
 
-  // رویداد فراخوان گارسون
   socket.on('call-waiter', (data) => {
     io.to(`business_${data.businessId}`).emit('waiter-called', data);
     console.log(`🔔 Waiter called for business ${data.businessId}, table ${data.tableNumber}`);
   });
 
-  // رویداد تغییر وضعیت سفارش
   socket.on('order-status-change', (data) => {
     io.to(`business_${data.businessId}`).emit('status-updated', data);
     console.log(`🔄 Order ${data.orderId} status changed to ${data.status}`);
