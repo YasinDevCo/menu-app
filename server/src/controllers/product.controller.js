@@ -2,8 +2,16 @@ const Product = require('../models/Product');
 const Category = require('../models/Category');
 const AppError = require('../utils/AppError');
 const catchAsync = require('../utils/catchAsync');
-const fs = require('fs');
-const path = require('path');
+const AWS = require('aws-sdk');
+
+// تنظیم کلاینت S3 برای حذف فایل‌های قدیمی
+const s3 = new AWS.S3({
+  endpoint: process.env.ARVAN_ENDPOINT,
+  accessKeyId: process.env.ARVAN_ACCESS_KEY,
+  secretAccessKey: process.env.ARVAN_SECRET_KEY,
+  s3ForcePathStyle: true,
+  signatureVersion: 'v4',
+});
 
 exports.createProduct = catchAsync(async (req, res, next) => {
   const { name, price, description, discountPrice, categoryId, preparationTime } = req.body;
@@ -15,7 +23,7 @@ exports.createProduct = catchAsync(async (req, res, next) => {
 
   let imageUrl = null;
   if (req.file) {
-    imageUrl = `/uploads/products/${req.file.filename}`;
+    imageUrl = req.file.location;  // آدرس کامل از S3
   }
 
   const product = await Product.create({
@@ -31,6 +39,25 @@ exports.createProduct = catchAsync(async (req, res, next) => {
   });
 
   res.status(201).json({ success: true, data: product });
+});
+
+exports.updateProduct = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const updates = req.body;
+
+  const product = await Product.findOne({ _id: id, businessId: req.businessId });
+  if (!product) {
+    return next(new AppError('محصول یافت نشد', 404));
+  }
+
+  if (req.file) {
+    updates.imageUrl = req.file.location;  // آدرس جدید از S3
+  }
+
+  Object.assign(product, updates);
+  await product.save();
+
+  res.status(200).json({ success: true, data: product });
 });
 
 exports.getProducts = catchAsync(async (req, res, next) => {
@@ -70,13 +97,22 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
   }
 
   if (req.file) {
+    // حذف فایل قدیمی از S3
     if (product.imageUrl) {
-      const oldImagePath = path.join(__dirname, '../../', product.imageUrl);
-      if (fs.existsSync(oldImagePath)) {
-        fs.unlinkSync(oldImagePath);
+      try {
+        // استخراج کلید فایل از آدرس کامل
+        const oldKey = product.imageUrl.replace(/^https?:\/\/[^\/]+\//, '');
+        await s3.deleteObject({
+          Bucket: process.env.ARVAN_BUCKET_NAME,
+          Key: oldKey,
+        }).promise();
+        console.log('✅ فایل قدیمی حذف شد:', oldKey);
+      } catch (err) {
+        console.error('❌ خطا در حذف فایل قدیمی:', err);
       }
     }
-    updates.imageUrl = `/uploads/products/${req.file.filename}`;
+    // ذخیره آدرس جدید
+    updates.imageUrl = req.file.location;
   }
 
   Object.assign(product, updates);
@@ -93,10 +129,17 @@ exports.deleteProduct = catchAsync(async (req, res, next) => {
     return next(new AppError('محصول یافت نشد', 404));
   }
 
+  // حذف فایل از S3
   if (product.imageUrl) {
-    const imagePath = path.join(__dirname, '../../', product.imageUrl);
-    if (fs.existsSync(imagePath)) {
-      fs.unlinkSync(imagePath);
+    try {
+      const oldKey = product.imageUrl.replace(/^https?:\/\/[^\/]+\//, '');
+      await s3.deleteObject({
+        Bucket: process.env.ARVAN_BUCKET_NAME,
+        Key: oldKey,
+      }).promise();
+      console.log('✅ فایل محصول حذف شد:', oldKey);
+    } catch (err) {
+      console.error('❌ خطا در حذف فایل:', err);
     }
   }
 

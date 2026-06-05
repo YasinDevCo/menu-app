@@ -1,8 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-
     remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 's3.ir-thr-at1.arvanstorage.ir',
+        port: '',
+        pathname: '/yas-bucket/**',
+      },
       {
         protocol: 'http',
         hostname: 'localhost',

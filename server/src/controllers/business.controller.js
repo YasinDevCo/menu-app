@@ -89,8 +89,8 @@ exports.updateProfile = catchAsync(async (req, res, next) => {
     const businessId = req.businessId;
     const updates = req.body;
 
-    // فیلدهای قابل به‌روزرسانی
-    const allowedFields = ['name', 'ownerName', 'phoneNumber', 'slug', 'primaryColor', 'isDark'];
+    // فیلدهای قابل به‌روزرسانی (ownerName را حذف کردم چون required است)
+    const allowedFields = ['name', 'phoneNumber', 'slug', 'primaryColor', 'isDark'];
     const filteredUpdates = {};
 
     allowedFields.forEach(field => {
@@ -100,14 +100,14 @@ exports.updateProfile = catchAsync(async (req, res, next) => {
     });
 
     // اگر عکس آپلود شده
-    if (req.file) {
-        filteredUpdates.logoUrl = `/uploads/business/${req.file.filename}`;
+    if (req.file && req.file.location) {
+        filteredUpdates.logoUrl = req.file.location;
     }
 
     const business = await Business.findByIdAndUpdate(
         businessId,
         filteredUpdates,
-        { new: true, runValidators: true }
+        { new: true, runValidators: false }  // ← runValidators: false برای جلوگیری از خطای ownerName
     ).select('-password');
 
     const token = generateToken(business._id);

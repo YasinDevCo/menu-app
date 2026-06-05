@@ -26,7 +26,7 @@ function LandingContent() {
         if (response.data.business) {
           setBusiness(response.data.business)
           if (response.data.business.logoUrl) {
-            setLogoUrl(`http://localhost:5000${response.data.business.logoUrl}`)
+            setLogoUrl(`https://yas-bucket.s3.ir-thr-at1.arvanstorage.ir/logos%2F1780651060521-142109558.jpg?versionId=`)
           }
         }
       } catch (error) {

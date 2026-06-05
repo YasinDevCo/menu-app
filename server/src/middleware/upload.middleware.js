@@ -1,64 +1,22 @@
 const multer = require('multer');
+const AWS = require('aws-sdk');
 const path = require('path');
 const fs = require('fs');
 
-// ========== پوشه محصولات ==========
-const productsDir = 'uploads/products';
-if (!fs.existsSync(productsDir)) {
-  fs.mkdirSync(productsDir, { recursive: true });
-}
-
-// ========== پوشه لوگو رستوران ==========
-const businessDir = 'uploads/business';
-if (!fs.existsSync(businessDir)) {
-  fs.mkdirSync(businessDir, { recursive: true });
-}
-
-// ========== پوشه آیکون دسته‌بندی ==========
-const categoryDir = 'uploads/categories';
-if (!fs.existsSync(categoryDir)) {
-  fs.mkdirSync(categoryDir, { recursive: true });
-}
-
-// ========== تنظیمات ذخیره برای محصولات ==========
-const productsStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, productsDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const ext = path.extname(file.originalname);
-    cb(null, `product-${uniqueSuffix}${ext}`);
-  }
+// تنظیم کلاینت S3
+const s3 = new AWS.S3({
+  endpoint: 'https://s3.ir-thr-at1.arvanstorage.ir',
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+  s3ForcePathStyle: true,
+  signatureVersion: 'v4',
 });
 
-// ========== تنظیمات ذخیره برای لوگو ==========
-const businessStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, businessDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const ext = path.extname(file.originalname);
-    cb(null, `logo-${uniqueSuffix}${ext}`);
-  }
-});
+// ذخیره موقت در حافظه با multer
+const storage = multer.memoryStorage();
 
-// ========== تنظیمات ذخیره برای آیکون ==========
-const categoryStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, categoryDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const ext = path.extname(file.originalname);
-    cb(null, `icon-${uniqueSuffix}${ext}`);
-  }
-});
-
-// ========== فیلتر فایل ==========
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png|webp|svg/;
+  const allowedTypes = /jpeg|jpg|png|webp|gif|svg/;
   const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
   const mimetype = allowedTypes.test(file.mimetype);
 
@@ -69,29 +27,87 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// ========== آپلودرها ==========
-const uploadProduct = multer({
-  storage: productsStorage,
+const upload = multer({
+  storage: storage,
   limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter
+  fileFilter: fileFilter,
 });
 
-const uploadBusiness = multer({
-  storage: businessStorage,
-  limits: { fileSize: 2 * 1024 * 1024 },
-  fileFilter
-});
+// تابع آپلود به S3
+const uploadToS3 = async (file, folder) => {
+  const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+  const ext = path.extname(file.originalname);
+  const key = `${folder}/${uniqueSuffix}${ext}`;
 
-const uploadCategory = multer({
-  storage: categoryStorage,
-  limits: { fileSize: 1 * 1024 * 1024 },
-  fileFilter
-});
+  const params = {
+    Bucket: 'yas-bucket',
+    Key: key,
+    Body: file.buffer,
+    ContentType: file.mimetype,
+    ACL: 'public-read',
+  };
 
-// ========== export ==========
+  const result = await s3.upload(params).promise();
+  return result.Location;
+};
+
+// Middleware برای آپلود محصول
+const uploadProduct = async (req, res, next) => {
+  try {
+    const uploadSingle = upload.single('image');
+    uploadSingle(req, res, async (err) => {
+      if (err) {
+        return next(err);
+      }
+      if (req.file) {
+        req.file.location = await uploadToS3(req.file, 'menu-items');
+      }
+      next();
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Middleware برای آپلود لوگو
+const uploadBusiness = async (req, res, next) => {
+  try {
+    const uploadSingle = upload.single('logo');
+    uploadSingle(req, res, async (err) => {
+      if (err) {
+        return next(err);
+      }
+      if (req.file) {
+        req.file.location = await uploadToS3(req.file, 'logos');
+      }
+      next();
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Middleware برای آپلود آیکون
+const uploadCategory = async (req, res, next) => {
+  try {
+    const uploadSingle = upload.single('icon');
+    uploadSingle(req, res, async (err) => {
+      if (err) {
+        return next(err);
+      }
+      if (req.file) {
+        req.file.location = await uploadToS3(req.file, 'icons');
+      }
+      next();
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   uploadProduct,
   uploadBusiness,
   uploadCategory,
-  upload: uploadProduct
+  upload: uploadProduct,
 };

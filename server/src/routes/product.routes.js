@@ -14,13 +14,13 @@ const {
 
 router.use(protect);
 
-router.post('/', uploadProduct.single('image'), validateProduct.create, createProduct);
+router.post('/', uploadProduct, validateProduct.create, createProduct);  // ← حذف .single
 
 router.get('/', getProducts);
 
 router.get('/:id', validateProduct.getById, getProductById);
 
-router.put('/:id', uploadProduct.single('image'), validateProduct.update, updateProduct);
+router.put('/:id', uploadProduct, validateProduct.update, updateProduct);  // ← حذف .single
 
 router.delete('/:id', validateProduct.delete, deleteProduct);
 

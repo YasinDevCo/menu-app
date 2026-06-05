@@ -13,6 +13,6 @@ router.post('/login', validateBusiness.login, login);
 router.use(protect);
 
 router.get('/profile', getProfile);
-router.put('/profile', uploadBusiness.single('logo'), updateProfile);  
+router.put('/profile', uploadBusiness, updateProfile); 
 
 module.exports = router;

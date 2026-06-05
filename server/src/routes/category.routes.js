@@ -14,9 +14,8 @@ router.get('/', getCategories);
 router.use(protect);
 
 
-router.post('/', uploadCategory.single('icon'), validateCategory.create, createCategory);
-
-router.put('/:id', uploadCategory.single('icon'), validateCategory.update, updateCategory);
+router.post('/', uploadCategory, validateCategory.create, createCategory);  // ← حذف .single
+router.put('/:id', uploadCategory, validateCategory.update, updateCategory);
 
 router.delete('/:id', validateCategory.delete, deleteCategory);
 
