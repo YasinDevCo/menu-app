@@ -18,8 +18,17 @@ exports.createCategory = catchAsync(async (req, res, next) => {
 });
 
 exports.getCategories = catchAsync(async (req, res, next) => {
-  const categories = await Category.find({ businessId: req.businessId, isActive: true })
+  // const categories = await Category.find({ businessId: req.businessId, isActive: true })
+  //   .sort({ priority: 1, createdAt: 1 });
+
+  // res.status(200).json({ success: true, count: categories.length, data: categories });
+  const businessId = req.businessId;
+  console.log('🔍 businessId in getCategories:', businessId); // ← دیباگ
+
+  const categories = await Category.find({ businessId, isActive: true })
     .sort({ priority: 1, createdAt: 1 });
+
+  console.log('📁 Categories found:', categories.length); // ← دیباگ
 
   res.status(200).json({ success: true, count: categories.length, data: categories });
 });

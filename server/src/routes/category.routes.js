@@ -10,10 +10,10 @@ const {
   deleteCategory
 } = require('../controllers/category.controller');
 
-router.get('/', getCategories);
 router.use(protect);
 
 
+router.get('/', getCategories);
 router.post('/', uploadCategory, validateCategory.create, createCategory);  // ← حذف .single
 router.put('/:id', uploadCategory, validateCategory.update, updateCategory);
 
