@@ -6,6 +6,7 @@ import { CategoryTabs } from '@/components/menu/category-tabs'
 import { MenuGrid } from '@/components/menu/menu-grid'
 import { CartBadge } from '@/components/cart/cart-badge'
 import { Skeleton } from '@/components/ui/skeleton'
+import { MenuItemSkeleton } from '@/components/menu/menu-item-skeleton'
 import { useMenu } from '@/lib/hooks/useMenu'
 import { useCategories } from '@/lib/hooks/useCategories'
 import { useCartStore } from '@/lib/store/cart-store'
@@ -34,7 +35,6 @@ export default function MenuPage() {
 
   const isLoading = menuLoading || categoriesLoading
 
-  // تبدیل محصولات با اضافه کردن categoryId
   const allProducts: Product[] = menuData?.menu?.flatMap((category: any) =>
     category.products.map((product: any) => ({
       ...product,
@@ -73,7 +73,6 @@ export default function MenuPage() {
     <div className="min-h-screen bg-background">
       <Header title="منو" />
 
-      {/* دکمه فراخوان گارسون */}
       <Button
         onClick={handleCallWaiter}
         disabled={isPending}
@@ -86,21 +85,19 @@ export default function MenuPage() {
 
       {isLoading ? (
         <>
+          {/* اسکلتون دسته‌بندی */}
           <div className="sticky top-14 z-40 bg-background border-b border-border">
-            <div className="flex gap-2 px-4 py-3 overflow-x-auto hide-scrollbar max-w-lg mx-auto">
+            <div className="flex gap-2 px-4 py-3 overflow-x-auto max-w-lg mx-auto">
               {[1, 2, 3, 4].map((i) => (
-                <Skeleton key={i} className="h-8 w-20 rounded-full flex-shrink-0" />
+                <Skeleton key={i} className="h-10 w-20 rounded-full flex-shrink-0" />
               ))}
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3 px-4 py-4 max-w-lg mx-auto">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="space-y-2">
-                <Skeleton className="aspect-[4/3] rounded-lg" />
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-3 w-full" />
-                <Skeleton className="h-8 w-1/2" />
-              </div>
+
+          {/* اسکلتون محصولات */}
+          <div className="space-y-3 px-4 pb-24 max-w-lg mx-auto">
+            {[1, 2, 3, 4].map((i) => (
+              <MenuItemSkeleton key={i} />
             ))}
           </div>
         </>

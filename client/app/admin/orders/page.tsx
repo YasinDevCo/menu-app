@@ -42,7 +42,7 @@ export default function AdminOrdersPage() {
                 setSoundEnabled(true)
                 const testAudio = new Audio('/sounds/notification.mp3')
                 testAudio.volume = 0.1
-                testAudio.play().catch(e => console.log('Test sound:', e))
+                testAudio.play()
             }
         }
 
@@ -62,12 +62,11 @@ export default function AdminOrdersPage() {
         const socket = getSocket(business.id)
 
         socket.on('order-notification', (data) => {
-            console.log('📢 سفارش جدید دریافت شد:', data)
 
             if (soundEnabledRef.current) {
                 const audio = new Audio('/sounds/notification.mp3')
                 audio.volume = 0.7
-                audio.play().catch(e => console.log('صدا پخش نشد:', e))
+                audio.play()
             }
 
             toast.success(`سفارش جدید از میز ${data.tableNumber}`, {
@@ -81,7 +80,6 @@ export default function AdminOrdersPage() {
         })
 
         socket.on('status-updated', (data) => {
-            console.log('🔄 وضعیت سفارش تغییر کرد:', data)
             refetch()
             toast.info(`سفارش ${data.orderId.slice(-6)}: ${data.status}`)
         })

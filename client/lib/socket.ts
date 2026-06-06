@@ -13,20 +13,16 @@ export const getSocket = (businessId?: string) => {
     });
 
     socket.on('connect', () => {
-      console.log('✅ Socket connected:', socket?.id);
 
       if (businessId) {
         socket?.emit('join-business', businessId);
-        console.log(`Joined business room: ${businessId}`);
       }
     });
 
     socket.on('disconnect', () => {
-      console.log('❌ Socket disconnected');
     });
 
     socket.on('connect_error', (error: any) => {
-      console.error('Socket connection error:', error);
     });
   }
 

@@ -18,7 +18,6 @@ api.interceptors.request.use(
         const token = parsed.state?.token;
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
-          console.log('✅ Token added to request:', config.url);
         } else {
           console.log('⚠️ No token found in auth-storage');
         }
